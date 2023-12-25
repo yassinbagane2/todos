@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PenSquare, Trash2 } from "lucide-react";
+import axios from "axios";
 
 const TaskItem = ({ todo, index, toggleDeleteModal }: any) => {
   const priorityClassName =
@@ -11,12 +12,21 @@ const TaskItem = ({ todo, index, toggleDeleteModal }: any) => {
   const [taskStatus, setTaskStatus] = useState(todo.status);
 
   const handleStatusChange = () => {
-    // Define the order of status: "To Do" -> "Progress" -> "Done"
     const statusOrder = ["Progress", "Done", "To do"];
     const currentIndex = statusOrder.indexOf(taskStatus);
     const nextIndex = (currentIndex + 1) % statusOrder.length;
+    const newStatus = statusOrder[nextIndex];
 
-    setTaskStatus(statusOrder[nextIndex]);
+    axios
+      .put(`http://localhost:8080/update-progress/${todo._id}`, {
+        progress: newStatus,
+      })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => console.log(err));
+
+    setTaskStatus(newStatus);
   };
 
   return (

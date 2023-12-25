@@ -44,6 +44,28 @@ app.post("/add-todo", async (req, res, next) => {
   }
 });
 
+app.put("/update-progress/:id", async (req, res, next) => {
+  const taskId = req.params.id;
+  const progress = req.body.progress;
+  console.log(progress);
+  try {
+    const updatedTask = await Todo.findByIdAndUpdate(
+      taskId,
+      { status: progress },
+      { new: true }
+    );
+
+    if (!updatedTask) {
+      throw new Error("Task not found");
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Progress updated successfully", updatedTask });
+  } catch (error) {
+    console.log(error);
+  }
+});
 app.delete("/delete-todo/:id", async (req, res, next) => {
   const taskId = req.params.id;
 
